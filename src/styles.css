@@ -1,23 +1,48 @@
-.state {
+* {
+    font-family: 'Clear Sans', sans-serif; 
+}
+
+.root {
     position: relative;
+}
+
+.background,
+.state {
     width: 400px;
     height: 400px;
     display: grid;
-    background: #bbada0;
     grid-template-columns: 25% 25% 25% 25%;
     grid-template-rows: 25% 25% 25% 25%;
     padding: 8px;
     border-radius: 5px;
 }
-  
+
+.backgroundItem,
 .stateItem {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 36px;
-    background: #ccc0b4;
     margin: 8px;
     border-radius: 5px;
     user-select: none;
+}
+
+.background {
+    background: #bbada0;
+}
+
+.state {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.backgroundItem {
+    background: #ccc0b4;
+}
+
+.stateItem {
+    font-size: 36px;
+    font-weight: 500;
 }
   

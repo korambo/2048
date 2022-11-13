@@ -23,22 +23,45 @@ const orientation = {
 
 class Game {
   constructor(root) {
-    this.root = root;
-
+    this.rootElement = root;
     this.mapSize = 4;
     this.mapItemsCount = this.mapSize ** 2;
-
-    this.root.className = "state";
-
     this.skipItems = [];
-
     this.state = new Array(this.mapItemsCount).fill(0);
 
     document.addEventListener("keydown", this.handleKeyDown.bind(this));
 
     this.addElement();
     this.addElement();
+    this.initMarkdown();
     this.redrawState();
+  }
+
+  initMarkdown() {
+    this.backgroundElement = document.createElement('div')
+    this.backgroundElement.className = 'background';
+
+    for (let i = 0; i < this.mapItemsCount; i++) {
+        const backgroundItem = document.createElement('div');
+        backgroundItem.className = 'backgroundItem';
+
+        this.backgroundElement.appendChild(backgroundItem);
+    }
+
+    this.stateElement = document.createElement('div');
+    this.stateElement.className = 'state';
+
+    this.rootElement.className = "root";
+
+    this.rootElement.appendChild(this.backgroundElement);
+    this.rootElement.appendChild(this.stateElement);
+  }
+
+  handleKeyDown(e) {
+    if (this instanceof Game) {
+      const o = orientation[e.key];
+      o && this.move(o);
+    }
   }
 
   getRandomIndex() {
@@ -49,7 +72,7 @@ class Game {
   }
 
   redrawState() {
-    this.root.innerHTML = "";
+    this.stateElement.innerHTML = "";
 
     this.state.forEach((item) => {
       const element = document.createElement("div");
@@ -57,11 +80,11 @@ class Game {
 
       if (item) {
         element.innerHTML = item;
-        const color = item > this.mapSize ? "#fff" : "#776e65";
-        element.style = `background-color: ${colors[item]}; color: ${color}`;
+        element.style.backgroundColor = colors[item];
+        element.style.color = item > 4 ? "#fff" : "#776e65"
       }
 
-      this.root.appendChild(element);
+      this.stateElement.appendChild(element);
     });
   }
 
@@ -72,27 +95,21 @@ class Game {
     }
   }
 
-  handleKeyDown(e) {
-    if (this instanceof Game) {
-      const o = orientation[e.key];
-      o && this.move(o);
-    }
-  }
-
   insert(item, itemIndex, insertIndex) {
     const insertItem = this.state[insertIndex];
-    if (
-      [0, item].includes(insertItem) &&
-      !this.skipItems.includes(insertIndex)
-    ) {
+    let isInserted = false;
+
+    if (this.skipItems.includes(insertIndex)) return;
+
+    if ([0, item].includes(insertItem)) {
       this.state[itemIndex] = 0;
       this.state[insertIndex] += item;
-      return true;
-    }
+      isInserted = true;
+    };
 
-    this.skipItems.push(insertIndex);
+    this.skipItems.push(insertIndex)
 
-    return false;
+    return isInserted;
   }
 
   moveUp() {
@@ -111,7 +128,6 @@ class Game {
       for (let i = 0; i < row; i++) {
         const insertIndex = i * this.mapSize + column;
         const isInserted = this.insert(item, itemIndex, insertIndex);
-
         if (isInserted) break;
       }
     }
@@ -133,7 +149,6 @@ class Game {
       for (let i = this.mapSize - 1; i > row; i--) {
         const insertIndex = i * this.mapSize + column;
         const isInserted = this.insert(item, itemIndex, insertIndex);
-
         if (isInserted) break;
       }
     }
@@ -151,7 +166,6 @@ class Game {
       for (let j = 0; j < column; j++) {
         const insertIndex = row * this.mapSize + j;
         const isInserted = this.insert(item, itemIndex, insertIndex);
-
         if (isInserted) break;
       }
     }
@@ -169,7 +183,6 @@ class Game {
       for (let j = this.mapSize - 1; j > column; j--) {
         const insertIndex = row * this.mapSize + j;
         const isInserted = this.insert(item, itemIndex, insertIndex);
-
         if (isInserted) break;
       }
     }
@@ -210,6 +223,6 @@ class Game {
   }
 }
 
-const appElement = document.getElementById("app");
+const gameRoot = document.getElementById("app");
 
-const game = new Game(appElement);
+const game = new Game(gameRoot);
